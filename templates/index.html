@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Speech Recognition in Python</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}" />
+</head>
+
+<body>
+<form method="POST"  enctype=multipart/form-data>
+Search : <input type="text" id='speechText' name="name"/>
+  <input type="button" id="start" value='Voice Search' onclick='startRecording();'/>
+     <input type = "file" name = "file" />
+    <input type = "submit"/>
+  <hr>
+</form>
+<div id="speechContainer">
+    <h1>Upload new File</h1>
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file"/>
+        <br>
+        <input type="submit" id="submitButton" value="Transcribe"/>
+    </form>
+
+    {% if transcript != "" %}
+        <div id="speechTranscriptContainer">
+            <h1>Transcript</h1>
+            <p id="speechText">{{ transcript }}</p>
+        </div>
+    {% endif %}
+</div>
+</script>
+<script>
+var recognition = new webkitSpeechRecognition();
+recognition.onresult = function(event) {
+  var saidText = "";
+  for (var i = event.resultIndex; i < event.results.length; i++) {
+    if (event.results[i].isFinal) {
+      saidText = event.results[i][0].transcript;
+    } else {
+      saidText += event.results[i][0].transcript;
+    }
+  }
+  // Update Textbox value
+  document.getElementById('speechText').value = saidText;
+    // Search Posts
+  searchPosts(saidText);
+}
+
+function startRecording(){
+  recognition.start();
+}
+</script>
+</body>
+</html>
